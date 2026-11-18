@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Software Engineering · MCQs · Interactive Quiz</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: #f4f7fc;
+      color: #1e2b3c;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.25s, color 0.25s;
+    }
+    body.dark {
+      background: #12181f;
+      color: #e3eaf0;
+    }
+    .quiz-container {
+      max-width: 1000px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 40px -12px rgba(0, 20, 30, 0.25);
+      padding: 32px 28px 48px;
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    body.dark .quiz-container {
+      background: #1c2530;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #0b2b44;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    body.dark h1 {
+      color: #c7dbe9;
+    }
+    h1 small {
+      font-size: 1rem;
+      font-weight: 400;
+      background: #e5edf5;
+      color: #1e4a6b;
+      padding: 4px 16px;
+      border-radius: 40px;
+      letter-spacing: 0.3px;
+    }
+    body.dark h1 small {
+      background: #2c3d4d;
+      color: #b6d2e7;
+    }
+    .subhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 2px solid #dfe9f2;
+      padding-bottom: 16px;
+    }
+    body.dark .subhead {
+      border-bottom-color: #2c3d4d;
+    }
+    .subhead-buttons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: #1f5e8e;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 4px 8px rgba(28, 80, 120, 0.2);
+    }
+    body.dark .badge {
+      background: #1e4e72;
+    }
+    .btn {
+      border: none;
+      color: #1e2b3c;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.15s;
+      border: 1px solid transparent;
+    }
+    .btn-shuffle {
+      background: #ff8c42;
+      box-shadow: 0 8px 16px -4px rgba(255, 140, 66, 0.4);
+      border-color: #f57c2e;
+    }
+    .btn-shuffle:hover {
+      background: #ff9f5a;
+      box-shadow: 0 10px 20px -4px rgba(255, 140, 66, 0.6);
+      transform: scale(1.01);
+    }
+    .btn-shuffle:active {
+      transform: scale(0.98);
+    }
+    .btn-theme {
+      background: #e5edf5;
+      border-color: #c4d5e4;
+      color: #1e4a6b;
+    }
+    .btn-theme:hover {
+      background: #d5e2ee;
+    }
+    body.dark .btn-theme {
+      background: #2c3d4d;
+      border-color: #3f5568;
+      color: #d9e9f7;
+    }
+    body.dark .btn-theme:hover {
+      background: #354a5c;
+    }
+    .mcq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .mcq-card {
+      background: #ffffff;
+      border: 1px solid #dbe6f0;
+      border-radius: 24px;
+      padding: 20px 22px;
+      transition: 0.1s;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+    body.dark .mcq-card {
+      background: #212b37;
+      border-color: #33414f;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    .mcq-card.correct-highlight {
+      border-left: 8px solid #2e9e5b;
+      background: #f6fff9;
+    }
+    body.dark .mcq-card.correct-highlight {
+      background: #1b2e24;
+      border-left-color: #3fb86a;
+    }
+    .mcq-card.wrong-highlight {
+      border-left: 8px solid #d14b4b;
+      background: #fff8f8;
+    }
+    body.dark .mcq-card.wrong-highlight {
+      background: #2e1f1f;
+      border-left-color: #d14b4b;
+    }
+    .mcq-question {
+      font-weight: 600;
+      font-size: 1.08rem;
+      line-height: 1.45;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 12px;
+      color: #1b344a;
+    }
+    body.dark .mcq-question {
+      color: #dce8f2;
+    }
+    .q-num {
+      background: #e3eef9;
+      color: #1c4e72;
+      border-radius: 30px;
+      padding: 2px 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      height: fit-content;
+      white-space: nowrap;
+    }
+    body.dark .q-num {
+      background: #2c3d4d;
+      color: #b6d2e7;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-left: 8px;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f9fcff;
+      border-radius: 60px;
+      padding: 10px 18px;
+      border: 1.5px solid #d0e0ee;
+      cursor: pointer;
+      transition: 0.12s;
+      font-size: 1rem;
+      color: #1b344a;
+    }
+    body.dark .option {
+      background: #2a3440;
+      border-color: #3f4f60;
+      color: #d9e9f7;
+    }
+    .option:hover {
+      background: #e5f0fd;
+      border-color: #7ea9c7;
+    }
+    body.dark .option:hover {
+      background: #33414f;
+      border-color: #5a7a96;
+    }
+    .option.selected {
+      background: #d9e9fa;
+      border-color: #1f6ea5;
+      box-shadow: 0 0 0 2px rgba(31, 110, 165, 0.2);
+    }
+    body.dark .option.selected {
+      background: #1f3e55;
+      border-color: #3f8ac9;
+      box-shadow: 0 0 0 2px rgba(63, 138, 201, 0.25);
+    }
+    .option.correct-option {
+      background: #d2f0de;
+      border-color: #1e8e4a;
+      font-weight: 500;
+    }
+    body.dark .option.correct-option {
+      background: #1e3a2a;
+      border-color: #3fb86a;
+      color: #b8f0ce;
+    }
+    .option.wrong-option {
+      background: #ffe1e1;
+      border-color: #bc3b3b;
+      text-decoration: line-through 1.5px #a12e2e;
+    }
+    body.dark .option.wrong-option {
+      background: #3a1f1f;
+      border-color: #d14b4b;
+      color: #f0b8b8;
+    }
+    .option input[type="radio"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #a3bdd6;
+      border-radius: 50%;
+      margin: 0;
+      flex-shrink: 0;
+      transition: 0.1s;
+      position: relative;
+      cursor: pointer;
+    }
+    body.dark .option input[type="radio"] {
+      border-color: #5a7a96;
+    }
+    .option input[type="radio"]:checked {
+      border: 6px solid #1e6ea5;
+      background: white;
+    }
+    body.dark .option input[type="radio"]:checked {
+      border-color: #3f8ac9;
+      background: #1c2530;
+    }
+    .option.correct-option input[type="radio"]:checked {
+      border-color: #1e8e4a;
+    }
+    body.dark .option.correct-option input[type="radio"]:checked {
+      border-color: #3fb86a;
+    }
+    .option.wrong-option input[type="radio"]:checked {
+      border-color: #bc3b3b;
+    }
+    body.dark .option.wrong-option input[type="radio"]:checked {
+      border-color: #d14b4b;
+    }
+    .feedback {
+      margin-top: 12px;
+      margin-left: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      min-height: 24px;
+    }
+    .feedback.correct {
+      color: #1b7e3f;
+    }
+    body.dark .feedback.correct {
+      color: #5fd48a;
+    }
+    .feedback.wrong {
+      color: #b13b3b;
+    }
+    body.dark .feedback.wrong {
+      color: #e07a7a;
+    }
+    .footer-note {
+      margin-top: 36px;
+      text-align: center;
+      color: #6a7f92;
+      font-size: 0.9rem;
+      border-top: 1px solid #d5e2ed;
+      padding-top: 22px;
+      font-weight: 400;
+    }
+    body.dark .footer-note {
+      color: #7a93a8;
+      border-top-color: #2c3d4d;
+    }
+    .footer-note strong {
+      color: #1e4a6b;
+    }
+    body.dark .footer-note strong {
+      color: #b6d2e7;
+    }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      font-size: 0.95rem;
+      color: #335e7e;
+      background: #eaf2fa;
+      padding: 12px 22px;
+      border-radius: 60px;
+      font-weight: 500;
+      transition: background 0.25s, color 0.25s;
+    }
+    body.dark .status-bar {
+      background: #212b37;
+      color: #9fc0d8;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container" id="quizApp">
+    <h1>
+      🧠 Software Engineering
+      <small>264 MCQs</small>
+    </h1>
+    <div class="subhead">
+      <span class="badge">📘 Interactive · instant feedback</span>
+      <div class="subhead-buttons">
+        <button class="btn btn-theme" id="themeBtn">🌙 Dark mode</button>
+        <button class="btn btn-shuffle" id="shuffleBtn">🔄 Shuffle questions & options</button>
+      </div>
+    </div>
+
+    <div class="mcq-list" id="mcqList"></div>
+
+    <div class="status-bar" id="statusBar">
+      <span id="answeredCount">0 / 264 answered</span>
+      <span>✨ Created by Muhammad Waleed</span>
+    </div>
+    <div class="footer-note">
+      <strong>Software Engineering MCQs</strong> · All 264 questions from the provided bank.
+    </div>
+  </div>
+
+  <script>
+    // --------------------------------------------------------------
+    // 300 MCQs from the file
+    // --------------------------------------------------------------
+    const rawMCQs = [
+      { q: "A software startup is evaluating two projects. Project Alpha requires an initial investment of $50,000 and generates $15,000 annually, while Project Beta requires $80,000 and generates $30,000 annually. Which financial metric helps the manager determine how quickly the initial investment is recovered?", opts: ["Return on Investment (ROI)", "Payback Period", "Net Present Value (NPV)", "Internal Rate of Return (IRR)"], ans: 1 },
+      { q: "During a project feasibility meeting, the finance lead points out that $10,000 earned three years from now is worth less than $10,000 today due to inflation and opportunity cost. Which financial analysis technique accounts for this time value of money?", opts: ["Payback Period", "Break-Even Analysis", "Net Present Value (NPV)", "Cost-Benefit Ratio"], ans: 2 },
+      { q: "A project manager calculates that a new ERP system will cost $120,000 to build and maintain over 3 years, while the expected financial savings and revenue gains over the same period total $180,000. What is the Return on Investment (ROI)?", opts: ["33.3%", "50%", "66.7%", "150%"], ans: 1 },
+      { q: "A company has already spent $40,000 on a legacy module that is failing all performance benchmarks. The team lead argues they must continue funding it so the $40,000 is not wasted. In financial analysis, what is this $40,000 classified as?", opts: ["Variable Cost", "Tangible Benefit", "Sunk Cost", "Opportunity Cost"], ans: 2 },
+      { q: "Before selecting a financial appraisal method, a CFO states that any approved software project must yield a return higher than the company's 12% cost of capital. Which metric directly compares against this hurdle rate?", opts: ["Internal Rate of Return (IRR)", "Payback Period", "Intangible Benefit Score", "Total Cost of Ownership (TCO)"], ans: 0 },
+      { q: "A hospital software vendor lists \"improved patient trust\" and \"higher staff morale\" in their financial proposal. How should the hospital's financial analyst categorize these items?", opts: ["Direct Operational Costs", "Tangible Benefits", "Intangible Benefits", "Capital Expenditures"], ans: 2 },
+      { q: "A SaaS product has fixed development costs of $60,000. Each subscription sells for $50, and the cloud hosting variable cost per user is $20. How many subscriptions must be sold to reach the break-even point?", opts: ["1,200", "2,000", "3,000", "600"], ans: 1 },
+      { q: "When estimating the 5-year financial impact of purchasing an off-the-shelf CRM, an analyst includes license fees, hardware upgrades, staff training, and annual support. What financial concept is being applied?", opts: ["Payback Analysis", "Total Cost of Ownership (TCO)", "Sunk Cost Valuation", "Earned Value Management"], ans: 1 },
+      { q: "A client asks a software house to build a \"smart inventory system\" because their warehouse is \"too slow.\" Before proposing any technology stack, the lead analyst interviews warehouse workers and maps current stock bottlenecks. Which phase is being executed?", opts: ["Software Construction", "Problem Understanding", "System Deployment", "Unit Testing"], ans: 1 },
+      { q: "During problem understanding, a business analyst discovers that the client's requested mobile app will not solve their core issue, which is actually corrupted data in their central database. What is the analyst's primary responsibility here?", opts: ["Build the mobile app anyway as requested", "Separate symptoms from the root cause of the problem", "Skip requirements and start database migration", "Increase the project budget immediately"], ans: 1 },
+      { q: "A software team is building a ride-sharing platform. To ensure everyone agrees on what the system will and will not do, the team defines boundaries such as \"supports cash and card payments, excludes cryptocurrency.\" What aspect of problem understanding is this?", opts: ["Defining System Scope", "Architectural Design", "Risk Mitigation", "Code Refactoring"], ans: 0 },
+      { q: "An analyst conducts observation sessions where she silently watches bank tellers process transactions to understand unspoken workflow habits. Which problem understanding technique is she using?", opts: ["Joint Application Development (JAD)", "Ethnography / Observation", "Prototyping", "Survey Distribution"], ans: 1 },
+      { q: "Stakeholders from marketing, finance, and IT give conflicting descriptions of how customer refunds should work. To resolve these conflicts and understand the problem domain collectively, the analyst organizes a structured workshop. What is this called?", opts: ["Code Review", "Joint Application Development (JAD) Session", "Regression Testing", "Sprint Retrospective"], ans: 1 },
+      { q: "While analyzing a retail business problem, an engineer creates a diagram showing external entities (Customers, Suppliers) interacting with the system as a single black box. What tool is being used to understand the problem boundaries?", opts: ["Context Diagram", "Class Diagram", "Gantt Chart", "Sequence Diagram"], ans: 0 },
+      { q: "A developer jumps straight into coding a payment gateway after a 5-minute phone call with a client, resulting in a system that violates regional banking laws. Which foundational step was neglected?", opts: ["Configuration Management", "Thorough Problem Understanding", "Load Testing", "Code Optimization"], ans: 1 },
+      { q: "A project manager is reviewing a Gantt chart and notices that \"Database Schema Design\" has an arrow pointing directly to the start of \"Backend API Development.\" What type of task dependency does this represent?", opts: ["Start-to-Start (SS)", "Finish-to-Finish (FF)", "Finish-to-Start (FS)", "Start-to-Finish (SF)"], ans: 2 },
+      { q: "On a project's Gantt chart, \"Client Sign-Off on UI Mockups\" is represented as a diamond shape with a duration of zero days. What does this symbol represent?", opts: ["A critical bottleneck", "A project milestone", "A slack period", "A resource conflict"], ans: 1 },
+      { q: "A developer falls sick, delaying a UI styling task by 3 days. Looking at the Gantt chart, the project manager sees that this task has 5 days of float and does not delay the final delivery date. What can be concluded about this task?", opts: ["It is on the Critical Path", "It is a non-critical task with positive slack", "It is a milestone", "It has a Finish-to-Finish dependency"], ans: 1 },
+      { q: "A team lead wants to visualize which tasks can be executed in parallel by different developers and track the real-time percentage completion of each module against baseline dates. Which tool is best suited for this?", opts: ["Use Case Diagram", "Gantt Chart", "Entity-Relationship Diagram", "State Transition Diagram"], ans: 1 },
+      { q: "During a weekly status review, the project manager checks the vertical \"Today\" line on the Gantt chart and sees that the \"Authentication Module\" bar is only 40% shaded to the left of the line. What does this indicate?", opts: ["The task is ahead of schedule", "The task is behind schedule", "The task has zero dependencies", "The task has been cancelled"], ans: 1 },
+      { q: "While updating a Gantt chart, a manager links \"Write User Manual\" and \"Software Coding\" so that both activities conclude on the exact same date before deployment. Which dependency type is used?", opts: ["Finish-to-Start (FS)", "Start-to-Start (SS)", "Finish-to-Finish (FF)", "Start-to-Finish (SF)"], ans: 2 },
+      { q: "A junior manager tries to use a Gantt chart to see the exact lines of code written per developer and memory leaks in the application. Why is this problematic?", opts: ["Gantt charts only track financial ROI", "Gantt charts show schedules and timelines, not internal code metrics", "Gantt charts cannot display parallel tasks", "Gantt charts only work for Waterfall projects"], ans: 1 },
+      { q: "A software team follows five core steps for every project: Communication, Planning, Modeling, Construction, and Deployment. In software engineering terminology, what are these five steps collectively known as?", opts: ["Umbrella Activities", "Generic Process Framework Activities", "Quality Assurance Metrics", "Risk Management Protocols"], ans: 1 },
+      { q: "During the \"Modeling\" framework activity, a software architect creates ER diagrams and system architecture blueprints before any production code is written. Which two sub-actions make up this framework activity?", opts: ["Coding and Testing", "Analysis and Design", "Scheduling and Tracking", "Deployment and Support"], ans: 1 },
+      { q: "A client requests a major change to the reporting module halfway through development. The team uses a version control system (Git) and formal change-control boards to manage the updated files without breaking existing builds. Which umbrella activity is this?", opts: ["Software Configuration Management (SCM)", "Software Project Tracking", "Formal Technical Reviews", "Reusability Management"], ans: 0 },
+      { q: "Before releasing a banking module, senior engineers conduct a structured peer walkthrough of the source code to catch logic errors early. Which umbrella activity is being performed?", opts: ["Measurement", "Formal Technical Reviews (FTR)", "Risk Management", "Work Product Preparation"], ans: 1 },
+      { q: "A project manager identifies that the third-party payment API might deprecate before launch, so she prepares a backup gateway integration plan. Which umbrella activity applies throughout the process to handle this?", opts: ["Software Quality Assurance", "Risk Management", "Configuration Management", "Deployment"], ans: 1 },
+      { q: "Unlike framework activities that occur in a sequence or iteration, activities like Software Quality Assurance and Measurement run continuously from project start to finish. Why are they called \"Umbrella Activities\"?", opts: ["They protect the team from client interference", "They span across the entire software process to support all framework activities", "They are only used during rainy-day emergencies", "They replace the need for project planning"], ans: 1 },
+      { q: "A software company tracks defect density, velocity, and lines of code across all projects to improve future cost and schedule estimates. Which umbrella activity is the company practicing?", opts: ["Measurement", "Reusability Management", "Communication", "Construction"], ans: 0 },
+      { q: "A team builds an authentication library once and catalogs it with documentation so future mobile and web projects can integrate it without rewriting code. Which umbrella activity governs this?", opts: ["Risk Management", "Reusability Management", "Formal Technical Reviews", "Project Tracking"], ans: 1 },
+      { q: "After delivering a completed e-commerce platform to the client, the engineering team collects user feedback and fixes post-release bugs. Which generic framework activity does this belong to?", opts: ["Planning", "Modeling", "Construction", "Deployment"], ans: 3 },
+      { q: "A QA engineer audits whether the development team is following the organization's documented coding standards and testing procedures during sprint execution. Which umbrella activity is this?", opts: ["Software Quality Assurance (SQA)", "Software Configuration Management", "Problem Understanding", "Financial Analysis"], ans: 0 },
+      { q: "A project manager compares actual weekly hours logged by developers against the baseline schedule created during the Planning phase. Which umbrella activity is being executed?", opts: ["Software Project Tracking and Control", "Reusability Management", "Work Product Preparation", "Modeling"], ans: 0 },
+      { q: "During the \"Construction\" framework activity, a developer writes Java classes and immediately runs JUnit tests to verify each method works properly. Which two actions are combined in Construction?", opts: ["Analysis and Design", "Code Generation and Testing", "Estimation and Scheduling", "Delivery and Feedback"], ans: 1 },
+      { q: "A project team creates user manuals, test plans, and database schemas alongside the source code. Which umbrella activity ensures these artifacts are properly formatted and produced?", opts: ["Work Product Preparation and Production", "Risk Management", "Measurement", "Communication"], ans: 0 },
+      { q: "An IT director rejects a proposed internal automation tool because its NPV is -$15,000, even though its payback period is 4 years. What does a negative NPV signify?", opts: ["The project will break even immediately", "The project's costs outweigh its discounted financial benefits", "The project has zero sunk costs", "The project's IRR is higher than the discount rate"], ans: 1 },
+      { q: "During a problem understanding session, a stakeholder says, \"The system must be super fast.\" The analyst pushes back and asks, \"What exact response time in seconds is acceptable during peak hours?\" What is the analyst eliminating?", opts: ["Ambiguity", "Technical Debt", "Sunk Cost", "Critical Path"], ans: 0 },
+      { q: "A Gantt chart shows that Task A (4 days), Task B (6 days), and Task C (3 days) must happen sequentially with zero slack between them to finish the project in 13 days. What is the sequence A -> B -> C called?", opts: ["Umbrella Path", "Critical Path", "Parallel Track", "Baseline Buffer"], ans: 1 },
+      { q: "A startup founders' team meets with a software consultant to discuss their initial vision, target users, and high-level business goals before any estimates are made. Which framework activity is taking place?", opts: ["Communication", "Modeling", "Construction", "Deployment"], ans: 0 },
+      { q: "A software vendor offers a client two pricing models: $100,000 upfront license or $3,000/month SaaS subscription. Comparing the cumulative cash outflows over 4 years to decide which costs less overall is an example of:", opts: ["Gantt Scheduling", "Financial Cost-Benefit / Cash Flow Analysis", "Problem Decomposition", "Configuration Management"], ans: 1 },
+      { q: "While mapping a university's course registration problem, an analyst discovers that administrative rules prevent students from enrolling if they have unpaid library fines. Identifying this rule falls under:", opts: ["Business Rules & Constraints Identification", "Code Refactoring", "Unit Testing", "Gantt Charting"], ans: 0 },
+      { q: "A project manager notices on a Gantt chart that two different tasks assigned to the same senior backend developer overlap completely during Week 4. What issue has the Gantt chart revealed?", opts: ["Resource Overallocation", "Negative NPV", "Scope Creep", "Missing Milestone"], ans: 0 },
+      { q: "In a software project, cost estimation, task breakdown, and resource allocation are performed before modeling begins. Which generic framework activity encompasses these tasks?", opts: ["Communication", "Planning", "Construction", "Deployment"], ans: 1 },
+      { q: "A project has an initial cost of $25,000 and generates net cash inflows of $10,000 in Year 1, $10,000 in Year 2, and $10,000 in Year 3. What is the exact Payback Period?", opts: ["2.0 years", "2.5 years", "3.0 years", "1.5 years"], ans: 1 },
+      { q: "A developer modifies a shared database connection file, accidentally overwriting a teammate's bug fix from the previous day. Which umbrella activity failed to prevent this conflict?", opts: ["Software Configuration Management (SCM)", "Formal Technical Reviews", "Financial Analysis", "Reusability Management"], ans: 0 },
+      { q: "An analyst creates a fishbone (Ishikawa) diagram with a client to trace why online checkout abandonment is at 70%. Which phase of software engineering is this activity supporting?", opts: ["Problem Understanding", "System Deployment", "Acceptance Testing", "Configuration Auditing"], ans: 0 },
+      { q: "On a Gantt chart, Task X can start 2 days after Task Y begins, without waiting for Task Y to finish completely. Which dependency relationship should the manager configure?", opts: ["Finish-to-Start (FS) with lag", "Start-to-Start (SS) with a 2-day lag", "Finish-to-Finish (FF)", "Start-to-Finish (SF)"], ans: 1 },
+      { q: "A software team skips the Planning and Modeling activities and immediately starts writing code to impress a client with quick progress. Weeks later, the architecture collapses under load. Which core software engineering principle was violated?", opts: ["Generic framework activities provide essential discipline and structure", "Umbrella activities are optional for small teams", "Financial analysis guarantees technical quality", "Gantt charts replace system design"], ans: 0 },
+      { q: "A company evaluates a new AI chatbot that costs $40,000 to implement and will save $16,000 per year in customer support salaries. Ignoring discount rates, how much net profit will the chatbot generate by the end of Year 4?", opts: ["$16,000", "$24,000", "$40,000", "$64,000"], ans: 1 },
+      { q: "During a Formal Technical Review (FTR), the review leader ensures the meeting focuses on finding defects in the design document rather than criticizing the author personally. Why is this rule critical to the umbrella activity?", opts: ["It reduces financial NPV", "It encourages psychological safety and objective defect detection", "It eliminates the need for testing", "It speeds up Gantt chart creation"], ans: 1 },
+      { q: "A government defense agency wants to build missile guidance software where every safety requirement is strictly defined upfront and must pass formal audits before moving to design. Which SDLC model is most suitable?", opts: ["Agile Model", "Prototyping Model", "Waterfall Model", "Incremental Model"], ans: 2 },
+      { q: "A software team finishes the Design phase of a project and begins Coding. Three weeks later, the client asks to modify a core requirement, forcing the team to halt work and renegotiate the contract. Which SDLC model are they likely using?", opts: ["Waterfall Model", "Scrum", "Incremental Model", "Extreme Programming"], ans: 0 },
+      { q: "In a medical device software project, regulatory bodies require that every specification document has a corresponding verification test plan mapped before coding starts. Which model enforces this symmetrical verification and validation structure?", opts: ["Prototyping Model", "V-Model", "Incremental Model", "Rapid Application Development"], ans: 1 },
+      { q: "During the V-Model lifecycle, a QA engineer writes Acceptance Test cases right after the Requirements Analysis phase is completed. Which development phase directly corresponds to System Testing on the right side of the V?", opts: ["Coding", "Module Design", "System Design", "Unit Testing"], ans: 2 },
+      { q: "A QA lead executes Integration Testing on a newly built payment module to ensure different services communicate correctly. In the V-Model, which left-side phase is this testing phase validating?", opts: ["Requirements Engineering", "Architectural Design", "Component Design", "Business Modeling"], ans: 1 },
+      { q: "A startup wants to launch an e-commerce platform quickly. They release core product browsing and checkout in Month 1, add user reviews and wishlists in Month 2, and introduce AI recommendations in Month 3. Which process model is being applied?", opts: ["Waterfall Model", "Incremental Model", "V-Model", "Big Bang Model"], ans: 1 },
+      { q: "An educational institute needs a basic student portal urgently before admissions open, while exam grading and hostel management modules can follow later. Why is the Incremental Model preferred over Waterfall here?", opts: ["It eliminates the need for testing", "It delivers working core functionality early in stages", "It requires zero upfront planning", "It avoids all customer feedback"], ans: 1 },
+      { q: "A client has a vague idea for a custom interior-design visualization app and struggles to explain how the interface should look. The team quickly builds a throwaway clickable mockup to gather feedback. Which model is being used?", opts: ["V-Model", "Waterfall Model", "Prototyping Model", "Spiral Model"], ans: 2 },
+      { q: "After validating a UI prototype with a client, the client insists on deploying the quick-and-dirty prototype directly into production to save time, despite poor code quality and security flaws. What is this classic risk of the Prototyping Model?", opts: ["Analysis Paralysis", "Compromising quality by shipping a throwaway prototype", "Excessive documentation overhead", "Inability to gather user feedback"], ans: 1 },
+      { q: "A fintech company is developing a mobile banking app in a rapidly changing market where competitor features shift every two weeks. They organize work into 2-week sprints with daily 15-minute standups. Which model is this?", opts: ["Waterfall Model", "V-Model", "Agile Model", "Classic Linear Model"], ans: 2 },
+      { q: "In an Agile team, the Product Owner constantly reprioritizes the backlog based on real user analytics after each sprint review. Which core Agile value is demonstrated here?", opts: ["Following a plan over responding to change", "Responding to change over following a plan", "Comprehensive documentation over working software", "Contract negotiation over customer collaboration"], ans: 1 },
+      { q: "A team builds an evolutionary prototype for a logistics dashboard, refining the actual codebase iteratively based on user feedback until it becomes the final production system. How does this differ from throwaway prototyping?", opts: ["It skips all design principles", "The prototype evolves directly into the final product", "It does not involve end users", "It is only used in the Waterfall model"], ans: 1 },
+      { q: "A small software house takes on a 6-month project with fixed budget, zero requirement ambiguity, and a team experienced in the exact technology stack. Why would Waterfall work well here?", opts: ["Requirements are stable and well-understood upfront", "The client wants weekly feature changes", "No documentation is required", "Testing happens only after final deployment"], ans: 0 },
+      { q: "During V-Model execution, a developer runs Unit Tests on individual functions and classes. Which specific left-side phase of the V-Model does Unit Testing verify?", opts: ["Requirements Specification", "Architectural Design", "Module / Component Design", "System Deployment"], ans: 2 },
+      { q: "In an Incremental Model project, Increment 1 is delivered and deployed to production while Increment 2 is still in the design phase. What happens if Increment 1 reveals a major usability flaw?", opts: ["The entire project is cancelled", "Feedback from Increment 1 is incorporated into Increment 2", "Increment 2 ignores Increment 1 completely", "The team switches to V-Model"], ans: 1 },
+      { q: "A client refuses to commit to a detailed 200-page specification document at the start of a project and wants to see working software every 14 days. Which model handles this scenario best?", opts: ["Waterfall Model", "V-Model", "Agile Model", "Linear Sequential Model"], ans: 2 },
+      { q: "A developer discovers that a newly hired junior engineer copied proprietary code from a previous employer's private repository into their current project. Under the ACM/IEEE Software Engineering Code of Ethics, which principle is violated?", opts: ["Public Interest", "Intellectual Property and Profession", "Product Pricing", "Colleague Autonomy"], ans: 1 },
+      { q: "A senior engineer notices that the company's autonomous braking software fails under heavy rain conditions, but the manager orders her to sign off on the release to meet a quarterly deadline. According to Software Engineering Ethics, what must she prioritize?", opts: ["Management loyalty", "Public health, safety, and welfare", "Company stock price", "Personal job security"], ans: 1 },
+      { q: "A freelance developer accepts a contract to build a high-frequency trading engine using Rust, even though he has never written a single line of Rust and lacks time to learn it properly. Which ethical obligation is he breaching?", opts: ["Confidentiality", "Competence (accepting work only within one's competence)", "Fair Competition", "Software Maintenance"], ans: 1 },
+      { q: "While maintaining a hospital's patient database, a software engineer accesses a celebrity's medical record out of personal curiosity without sharing it. Is this an ethical violation?", opts: ["No, because the data was not sold or leaked", "Yes, it violates client confidentiality and privacy ethics", "No, because engineers have full database privileges", "Yes, only if the hospital finds out"], ans: 1 },
+      { q: "A software architect is asked to select a cloud vendor for a client. Unbeknownst to the client, the architect owns shares in one of the bidding cloud companies. What ethical issue does this create?", opts: ["Copyright Infringement", "Undisclosed Conflict of Interest", "Scope Creep", "Reverse Engineering"], ans: 1 },
+      { q: "During a post-mortem meeting for a failed deployment, a lead developer blames a junior tester for missing a bug, even though the developer bypassed code review rules. Which ethical principle regarding colleagues is violated?", opts: ["Being fair and supportive to colleagues", "Maximizing profit", "Public disclosure", "Customer satisfaction"], ans: 0 },
+      { q: "A developer discovers a critical security vulnerability in an open-source library used by millions of banking apps. Instead of selling it on the dark web, she privately notifies the maintainers and helps patch it. This reflects which ethical principle?", opts: ["Acting consistently with the public interest", "Maximizing personal ROI", "Violating non-disclosure agreements", "Avoiding professional development"], ans: 0 },
+      { q: "A software vendor knowingly hides a major performance bottleneck in their software demo by running it on a supercomputer while telling the client it runs on standard laptops. Which ethical principle is breached?", opts: ["Judgment and Integrity", "Self-Management", "Colleague Mentorship", "Rapid Prototyping"], ans: 0 },
+      { q: "An Agile Scrum team realizes mid-sprint that they cannot finish all 8 user stories committed during Sprint Planning. What should the team do according to Agile principles?", opts: ["Work unpaid 16-hour shifts to force completion", "Collaborate with the Product Owner to adjust scope while protecting quality", "Skip all testing to mark stories as done", "Cancel the daily standup meetings"], ans: 1 },
+      { q: "During a Daily Scrum (Standup), two developers start a 40-minute deep architectural debate on database indexing, blocking the rest of the team. How should the Scrum Master handle this?", opts: ["Let them argue until resolved", "Time-box the standup to 15 minutes and move the deep discussion offline", "Cancel the sprint immediately", "Ask the client to decide"], ans: 1 },
+      { q: "At the end of a 2-week sprint, the Agile team demonstrates working features to stakeholders and gathers feedback on the actual product increment. Which Scrum ceremony is this?", opts: ["Sprint Retrospective", "Sprint Review", "Daily Standup", "Backlog Refinement"], ans: 1 },
+      { q: "After a stressful sprint with frequent merge conflicts, the Scrum team meets privately to discuss how they can improve their internal workflow and tooling in the next sprint. Which ceremony is this?", opts: ["Sprint Review", "Sprint Planning", "Sprint Retrospective", "Stakeholder Demo"], ans: 2 },
+      { q: "Two Agile developers sit together at one workstation; one writes code (\"Driver\") while the other continuously reviews each line and thinks strategically (\"Navigator\"). Which Agile practice is being used?", opts: ["Test-Driven Development (TDD)", "Pair Programming", "Continuous Deployment", "Kanban Limiting"], ans: 1 },
+      { q: "Before writing any production code for a tax-calculation function, an Agile developer writes an automated unit test that initially fails, then writes just enough code to make it pass. What is this practice called?", opts: ["Behavior-Driven Deployment", "Test-Driven Development (TDD)", "Acceptance Testing", "Refactoring"], ans: 1 },
+      { q: "An Agile product owner writes a requirement on a card: \"As a frequent flyer, I want to redeem reward points for seat upgrades so that I can travel comfortably.\" What is this artifact called?", opts: ["Use Case Specification", "User Story", "Gantt Milestone", "Feasibility Report"], ans: 1 },
+      { q: "In a Use Case Diagram for an ATM system, the \"Withdraw Cash\" use case always requires the user to be authenticated first via \"Verify PIN\". Which relationship connects \"Withdraw Cash\" to \"Verify PIN\"?", opts: ["Extend", "Include", "Generalization", "Dependency"], ans: 1 },
+      { q: "In an online shopping Use Case Diagram, \"Checkout\" can optionally trigger \"Apply Discount Coupon\" only if the customer enters a promo code. Which relationship arrow should be drawn?", opts: ["\"Checkout\" includes \"Apply Discount Coupon\"", "\"Apply Discount Coupon\" extends \"Checkout\"", "\"Checkout\" generalizes \"Apply Discount Coupon\"", "\"Apply Discount Coupon\" includes \"Checkout\""], ans: 1 },
+      { q: "While modeling a university portal's Use Case Diagram, an analyst draws \"Student\" and \"Professor\" with hollow triangle arrows pointing toward \"University User\". What UML relationship is this?", opts: ["Include", "Extend", "Generalization (Inheritance)", "Association"], ans: 2 },
+      { q: "A system automatically sends an email backup every midnight using an internal cron job, without any human interaction. How should this time-triggered initiator be represented in a Use Case Diagram?", opts: ["Inside the system boundary box as a use case", "As a secondary or system actor outside the system boundary", "As an include relationship", "It cannot be shown in UML"], ans: 1 },
+      { q: "A junior analyst draws a Use Case Diagram for a hospital system and includes use cases like \"Connect to MySQL Database\" and \"Hash Password with SHA-256\". Why is this incorrect?", opts: ["Use cases must describe external user-visible goals, not internal technical implementation", "Databases cannot be part of a hospital system", "Passwords should not be hashed", "Actors must be inside the system boundary"], ans: 0 },
+      { q: "In a Use Case Diagram for a library system, the rectangular box enclosing all the ovals (\"Borrow Book\", \"Return Book\", \"Search Catalog\") represents what?", opts: ["The Actor's Role", "The System Boundary (Scope)", "The Database Schema", "The Network Firewall"], ans: 1 },
+      { q: "During a flight booking Use Case, \"Book Flight\" is initiated by a \"Passenger\", while the \"Payment Gateway API\" receives transaction requests to complete the process. How is the Payment Gateway classified?", opts: ["Primary Actor", "Secondary (Supporting) Actor", "System Boundary", "Extend Use Case"], ans: 1 },
+      { q: "A software company builds a tax filing system, knowing that government tax brackets change every July. To cope with this predictable change without rewriting the whole app, the architect isolates tax rules in an external configuration file. Which strategy for coping with change is this?", opts: ["Change Avoidance (Anticipation of Change)", "Throwaway Prototyping", "Waterfall Freezing", "Code Obfuscation"], ans: 0 },
+      { q: "A client frequently changes their mind about the layout and color scheme of an analytics dashboard. Rather than writing formal change requests for every tweak, the team uses rapid UI prototyping and short iterations. Which approach to coping with change is applied?", opts: ["Change Tolerance (Incremental Delivery & Prototyping)", "Strict Scope Freeze", "Formal Change Control Board Rejection", "Big Design Up Front"], ans: 0 },
+      { q: "A developer modifies a legacy billing module to add a new discount rule, and accidentally breaks the invoice PDF generator. Because the team has an automated suite of unit and integration tests running on every commit, the bug is caught within 3 minutes. Which change-coping practice saved them?", opts: ["Continuous Integration & Automated Regression Testing", "Gantt Chart Rescheduling", "Feasibility Analysis", "Ethnography"], ans: 0 },
+      { q: "In a large enterprise project, a client requests a major database schema change two weeks before launch. The request is logged, analyzed for cost and schedule impact, and reviewed by a formal committee before approval. What is this mechanism called?", opts: ["Change Control Board (CCB) / Formal Change Management", "Daily Standup", "Pair Programming", "User Story Mapping"], ans: 0 },
+      { q: "To ensure future changes in payment providers (e.g., switching from Stripe to PayPal) do not break the order-processing logic, a software engineer programs against a generic `IPaymentProcessor` interface. Which design principle helps cope with change?", opts: ["Tight Coupling", "Loose Coupling and Abstraction", "Hardcoding Dependencies", "God Object Pattern"], ans: 1 },
+      { q: "An Agile team notices their codebase has become messy after five sprints of rapid feature additions, making new changes slow and risky. They dedicate two days to restructuring internal code without altering external behavior. What is this called?", opts: ["Refactoring", "Reverse Engineering", "System Deployment", "Feasibility Study"], ans: 0 },
+      { q: "A startup wants to build a real-time satellite imagery app that processes 10TB of data per second on a $5,000 budget using two junior developers. During Requirements Engineering, which study will immediately flag this project as unviable?", opts: ["Operational Feasibility", "Technical and Economic Feasibility", "Legal Feasibility", "Cultural Feasibility"], ans: 1 },
+      { q: "A hospital purchases a highly advanced AI diagnosis system that is technically sound and within budget, but doctors refuse to use it because it adds 15 minutes of data entry per patient. Which feasibility dimension failed?", opts: ["Technical Feasibility", "Operational Feasibility", "Schedule Feasibility", "Economic Feasibility"], ans: 1 },
+      { q: "A retail chain wants a custom Black Friday e-commerce platform built from scratch in just 3 weeks, whereas realistic engineering estimates show it requires 14 weeks. Which feasibility factor is violated?", opts: ["Schedule Feasibility", "Legal Feasibility", "Technical Feasibility", "Environmental Feasibility"], ans: 0 },
+      { q: "Before building a fintech app that scrapes user bank credentials without explicit bank API authorization, the engineering lead consults lawyers regarding data privacy laws (GDPR/local regulations). Which feasibility study is being conducted?", opts: ["Operational Feasibility", "Legal and Regulatory Feasibility", "Technical Feasibility", "Schedule Feasibility"], ans: 1 },
+      { q: "During Requirements Elicitation, an analyst interviews airport air-traffic controllers. They struggle to explain how they prioritize emergencies because their decisions are instinctual. Which elicitation technique works best here?", opts: ["Sending a multiple-choice questionnaire", "Ethnography / Direct Workplace Observation", "Reading old financial invoices", "Writing code immediately"], ans: 1 },
+      { q: "An analyst conducts interviews with 15 bank managers across different branches to gather requirements for a new loan approval system. Some managers want automated approvals under $5,000, while others demand manual review for all loans. What sub-activity of Requirements Analysis must follow?", opts: ["Requirements Prioritization and Conflict Resolution", "Unit Testing", "Database Normalization", "System Deployment"], ans: 0 },
+      { q: "A software analyst is reviewing a draft SRS document and notices the sentence: \"The system shall be user-friendly and load pages quickly.\" Why does this fail Requirements Specification standards?", opts: ["It is overly technical", "It is ambiguous and non-verifiable (not measurable)", "It describes a functional requirement instead of non-functional", "It uses passive voice"], ans: 1 },
+      { q: "In an SRS document, the statement \"The system shall allow registered users to reset their password via an OTP sent to their verified mobile number\" is written. How is this requirement classified?", opts: ["Non-Functional Requirement", "Functional Requirement", "Domain Constraint", "Feasibility Metric"], ans: 1 },
+      { q: "An SRS specifies: \"The payment API must maintain 99.99% uptime and respond to 95% of requests within 200 milliseconds.\" What type of requirement is this?", opts: ["Functional Requirement", "Non-Functional Requirement (Performance & Availability)", "User Interface Mockup", "Business Scope Statement"], ans: 1 },
+      { q: "A software house uses IEEE 830 standard templates to structure their Software Requirements Specification (SRS) so that clients, developers, and testers share an unambiguous contractual baseline. Which phase of Requirements Engineering produces this document?", opts: ["Feasibility Study", "Requirements Elicitation", "Requirements Specification", "Requirements Validation"], ans: 2 },
+      { q: "Before coding begins, the QA lead, client representative, and lead architect sit together to review the completed SRS document line by line to check for missing edge cases, contradictions, and realism. Which RE phase is this?", opts: ["Requirements Elicitation", "Requirements Validation", "Feasibility Study", "System Maintenance"], ans: 1 },
+      { q: "During Requirements Validation, a reviewer notices that Requirement 14 states \"All user data must be deleted upon account closure,\" while Requirement 42 states \"User transaction logs must be retained for 7 years for tax audits.\" Which validation check caught this?", opts: ["Consistency Check", "Realism Check", "Verifiability Check", "Validity Check"], ans: 0 },
+      { q: "A client reviews the SRS document and realizes that while all requirements are clearly written, the analyst completely forgot to include an administrative dashboard for managing banned users. Which Requirements Validation check failed?", opts: ["Completeness Check", "Consistency Check", "Realism Check", "Syntax Check"], ans: 0 },
+      { q: "During Requirements Elicitation, stakeholders are overwhelmed by a massive list of 120 requested features for Version 1.0. The analyst uses the MoSCoW method (Must have, Should have, Could have, Won't have). What is the analyst doing?", opts: ["Requirements Prioritization", "Requirements Validation", "Configuration Auditing", "Feasibility Estimation"], ans: 0 },
+      { q: "A software engineer links every requirement ID in the SRS (e.g., REQ-101) to its corresponding design module, source code file, and test case so that if REQ-101 changes, affected artifacts are instantly identified. What is this quality of a good SRS called?", opts: ["Traceability", "Modifiability", "Unambiguity", "Completeness"], ans: 0 },
+      { q: "A team skips Requirements Validation and builds a warehouse app directly from an unreviewed SRS. Upon delivery, the client rejects it because the barcode scanner workflow does not match how their warehouse actually operates. What key question of Requirements Validation was missed?", opts: ["\"Are we building the system right?\" (Verification)", "\"Are we building the right system?\" (Validation)", "\"What is the project's IRR?\"", "\"How many lines of code were written?\""], ans: 1 },
+      { q: "A project manager discovers that a developer added a dark-mode feature and a mini-game into the corporate accounting app without any client request or SRS update, delaying the core release by a week. What is this phenomenon called?", opts: ["Gold Plating / Scope Creep", "Requirements Validation", "Feasibility Analysis", "Evolutionary Prototyping"], ans: 0 },
+      { q: "During Requirements Elicitation for a global e-commerce site, an analyst notes that European users require GDPR cookie consent banners while US users do not. Capturing such regional legal rules falls under which category?", opts: ["Regulatory / Domain Non-Functional Requirements", "Architectural Design", "Unit Testing", "Gantt Chart Dependencies"], ans: 0 },
+      { q: "A junior analyst writes an SRS requirement: \"The system shall use a B-Tree index in PostgreSQL to store customer records.\" Why does a senior architect flag this during Requirements Validation?", opts: ["PostgreSQL does not support B-Trees", "Requirements should specify WHAT the system must do, not HOW to implement it", "It is a non-functional requirement", "It violates software ethics"], ans: 1 },
+      { q: "An enterprise client asks for an HR system that integrates with their 25-year-old mainframe payroll software, which has no documentation and no living original developers. Which feasibility study raises a major red flag here?", opts: ["Technical Feasibility", "Legal Feasibility", "Cultural Feasibility", "Economic ROI"], ans: 0 },
+      { q: "In a Requirements Engineering workshop, the analyst uses storyboards and wireframes to walk end users through how they will submit leave requests. Why is this effective during Requirements Validation?", opts: ["It helps users visualize behavior and spot missing requirements early", "It generates production backend code automatically", "It replaces the need for an SRS document", "It calculates the Critical Path"], ans: 0 },
+      { q: "A software team receives 300 raw emails, meeting notes, and survey responses from various stakeholders. Before writing the formal SRS, they group related needs, remove duplicates, and resolve terminology clashes. Which phase is this?", opts: ["Requirements Analysis and Classification", "Feasibility Study", "Acceptance Testing", "Deployment"], ans: 0 },
+      { q: "When documenting requirements, an engineer separates \"User Requirements\" (written in plain language for clients) from \"System Requirements\" (detailed technical specifications for developers). Why is this distinction important?", opts: ["Different stakeholders have different technical backgrounds and needs", "User requirements do not need to be validated", "System requirements are optional in Agile", "It reduces software licensing fees"], ans: 0 },
+      { q: "A health-tech startup builds an app that collects user heart-rate data and secretly sells it to insurance companies without user consent to boost company ROI. Which ethical and requirements principle is violated?", opts: ["Privacy, Informed Consent, and Public Interest", "Technical Feasibility", "Gantt Chart Scheduling", "V-Model Verification"], ans: 0 },
+      { q: "During a sprint, a customer asks to swap out a low-priority profile customization feature for a newly mandated tax-receipt export feature of equal effort. Why does Agile welcome this change?", opts: ["It maximizes business value delivered to the customer", "Agile teams never plan ahead", "Tax receipts require no testing", "It eliminates the Product Owner role"], ans: 0 },
+      { q: "A team uses a Requirements Traceability Matrix (RTM) during validation. One test case in the QA plan does not map to any requirement in the SRS. What does this indicate?", opts: ["Either a requirement is missing from the SRS or unnecessary testing is being done", "The project is 100% complete", "The Gantt chart has zero slack", "The prototype is evolutionary"], ans: 0 },
+      { q: "In a Use Case Diagram for an online banking system, \"Transfer Funds\" can fail if the account has insufficient balance, triggering an exceptional flow called \"Handle Overdraft Alert\". How is this conditional exceptional behavior modeled?", opts: ["\"Handle Overdraft Alert\" extends \"Transfer Funds\"", "\"Transfer Funds\" includes \"Handle Overdraft Alert\"", "\"Handle Overdraft Alert\" generalizes \"Transfer Funds\"", "As a separate system boundary"], ans: 0 },
+      { q: "A software company bids for a government project by deliberately underestimating the development cost by 60% to win the contract, planning to overcharge later through change requests. Which ethical principle is violated?", opts: ["Honesty and Integrity in Financial/Cost Estimation", "Reusability Management", "Pair Programming", "Incremental Delivery"], ans: 0 },
+      { q: "A project manager notices that two tasks on a Gantt chart—\"Frontend UI Development\" and \"Backend API Development\"—can start simultaneously once the API contract is agreed upon. Which dependency links them?", opts: ["Start-to-Start (SS)", "Finish-to-Start (FS)", "Finish-to-Finish (FF)", "Start-to-Finish (SF)"], ans: 0 },
+      { q: "While building a school management system using the Incremental Model, the team delivers the Attendance Module first. Teachers start using it daily, revealing that marking attendance takes too many clicks. The team fixes this UX issue in Increment 2. What benefit of Incremental development is shown?", opts: ["Early user feedback improves subsequent increments", "Zero upfront communication is needed", "Testing is completely automated", "Cost is always lower than Waterfall"], ans: 0 },
+      { q: "A software architect is designing a large e-commerce platform and separates the payment logic, inventory logic, and notification logic into independent microservices. If the notification provider changes later, only one small service is modified. Which strategy is this?", opts: ["Modularization / Separation of Concerns to cope with change", "Waterfall Freezing", "Throwaway Prototyping", "Sunk Cost Analysis"], ans: 0 },
+      { q: "During Requirements Elicitation, a stakeholder says, \"The system must handle high traffic.\" The analyst converts this vague statement into: \"The system shall support 10,000 concurrent users with less than 1.5 seconds response time.\" Which SRS quality attribute was achieved?", opts: ["Verifiability and Unambiguity", "Traceability", "Financial Feasibility", "Ethical Compliance"], ans: 0 },
+      { q: "A team is developing a safety-critical nuclear reactor monitoring system. Why would pure Agile (without heavy upfront formal verification) be risky compared to the V-Model here?", opts: ["Safety-critical systems require rigorous upfront specification and formal verification at every stage", "Agile developers cannot write C or C++ code", "V-Model requires zero testing", "Nuclear systems never have requirements"], ans: 0 },
+      { q: "During a Feasibility Study, the financial analyst calculates that the proposed inventory software will cost $80,000 to build and will save $25,000 per year in reduced warehouse losses. What is the simple Payback Period?", opts: ["2.5 years", "3.2 years", "4.0 years", "1.8 years"], ans: 1 },
+      { q: "A software engineer is assigned to review a competitor's patented software by decompiling its binary code to copy its proprietary algorithm. Under Software Engineering Ethics, how should the engineer respond?", opts: ["Refuse, as reverse engineering to steal proprietary IP violates ethical and legal standards", "Proceed if the manager promises a bonus", "Copy the algorithm but rename the variables", "Only copy half of the code"], ans: 0 },
+      { q: "In an Agile Kanban board, the team limits the \"In Progress\" column to a maximum of 3 tasks at any time. What is the primary purpose of this Work-In-Progress (WIP) limit?", opts: ["To prevent context switching and identify workflow bottlenecks quickly", "To slow down fast developers", "To replace Sprint Reviews", "To eliminate the need for a Gantt chart"], ans: 0 },
+      { q: "While creating a Use Case Diagram for a ride-hailing app, an analyst connects both \"Driver\" and \"Rider\" actors to the \"Rate Trip\" use case. What does this signify?", opts: ["Both actors interact with and participate in the \"Rate Trip\" functionality", "Driver inherits from Rider", "Rate Trip is an internal database table", "Rider includes Driver"], ans: 0 },
+      { q: "A client asks a software agency to build a custom CRM, but during Problem Understanding, the analyst realizes an off-the-shelf SaaS tool like HubSpot meets 95% of their needs at 10% of the cost. What should an ethical analyst recommend?", opts: ["Recommend the off-the-shelf SaaS solution to serve the client's best interest", "Hide the SaaS option and charge $200,000 for custom development", "Build a custom CRM anyway without telling them", "Inflate the Gantt chart timeline"], ans: 0 },
+      { q: "During Requirements Validation, a developer points out that a requested feature—\"Real-time 8K video streaming over 2G mobile networks\"—is physically impossible given bandwidth limits. Which validation criterion failed?", opts: ["Realism / Feasibility", "Completeness", "Traceability", "Syntax Formatting"], ans: 0 },
+      { q: "In a software project, the team conducts daily builds and automated tests every time code is pushed to the main branch. Which umbrella activity and Agile practice overlap here?", opts: ["Software Configuration Management & Continuous Integration", "Financial Analysis & Break-Even Modeling", "Ethnography & JAD Sessions", "Payback Period & NPV"], ans: 0 },
+      { q: "A software product manager notices that customers keep requesting minor text and layout changes after every demo. Instead of treating each tweak as a crisis, the team uses CSS themes and modular UI components. This demonstrates:", opts: ["Designing for change (Change Anticipation)", "Rigid Waterfall enforcement", "Scope Creep negligence", "Sunk Cost fallacy"], ans: 0 },
+      { q: "An SRS document contains a section describing the hardware interfaces, operating system versions, and third-party APIs the software must interact with. Where does this belong in a standard SRS?", opts: ["External Interface Requirements", "Financial Feasibility Appendix", "Gantt Chart Schedule", "Code Review Checklist"], ans: 0 },
+      { q: "A project team completes Coding and moves into System Testing, only to discover that the client actually wanted a multi-currency billing engine, which was misunderstood during initial meetings. What is the cost impact of fixing this error now compared to catching it during Requirements Engineering?", opts: ["Significantly higher (often 10x to 100x more expensive)", "Exactly the same cost", "Cheaper because the code is already written", "Zero cost if using a Gantt chart"], ans: 0 },
+      { q: "During Sprint Planning, the Product Owner explains the business goal of the top backlog items, and the Developers estimate the effort and decide how much work they can pull into the sprint. Who has the final say on HOW MUCH work the development team commits to?", opts: ["The Developers (Development Team)", "The CEO", "The Sales Director", "The External Client"], ans: 0 },
+      { q: "A software engineer builds a social media feed algorithm and notices during testing that it disproportionately amplifies harmful misinformation to increase user screen time. According to the ACM/IEEE Code of Ethics, what is the engineer's duty?", opts: ["Raise the ethical concern with leadership and mitigate public harm", "Ignore it because engagement metrics look good", "Hide the test results", "Blame the users"], ans: 0 },
+      { q: "In a Use Case Diagram for an e-learning platform, \"Enroll in Course\" requires \"Check Prerequisites\" to always execute as part of the enrollment process. How should the dashed arrow point?", opts: ["From \"Enroll in Course\" to \"Check Prerequisites\" labeled `<<include>>`", "From \"Check Prerequisites\" to \"Enroll in Course\" labeled `<<include>>`", "From \"Check Prerequisites\" to \"Enroll in Course\" labeled `<<extend>>`", "Solid line with a hollow triangle"], ans: 0 },
+      { q: "A software firm evaluates two projects. Project X has an NPV of +$45,000, while Project Y has an NPV of +$12,000. Assuming identical risk and resource availability, which project is financially superior?", opts: ["Project X, because it creates greater net value in today's dollars", "Project Y, because smaller numbers are safer", "Neither, because NPV must be zero", "Both are financially unviable"], ans: 0 },
+      { q: "While constructing a Gantt chart, a manager realizes that \"User Acceptance Testing\" cannot begin until \"System Integration Testing\" is 100% complete. What happens to the project launch date if \"System Integration Testing\" is on the Critical Path and is delayed by 4 days?", opts: ["The project launch date is delayed by 4 days", "The launch date remains unchanged", "Slack absorbs all 4 days automatically", "Only the budget changes, not the schedule"], ans: 0 },
+      { q: "A team is developing a complex ERP system where requirements are poorly understood at the start, and stakeholders from 6 departments have conflicting workflows. Which combination of models works best?", opts: ["Prototyping for requirements discovery followed by Incremental/Agile delivery", "Pure Waterfall with a 2-year freeze", "Big Bang coding without specifications", "V-Model with zero user interaction"], ans: 0 },
+      { q: "During Requirements Elicitation, an analyst distributes a structured online questionnaire to 5,000 geographically dispersed app users to rank their top 3 desired features. Why is a questionnaire chosen over one-on-one interviews here?", opts: ["It gathers quantitative input from a large, distributed user base cost-effectively", "It eliminates the need for requirements analysis", "It replaces functional testing", "It produces UML diagrams automatically"], ans: 0 },
+      { q: "A developer writes a clean, modular function, but leaves no comments or documentation, and uses cryptic variable names like `x1`, `temp2`, and `zz`. Which software quality attribute and maintenance requirement is harmed?", opts: ["Maintainability and Readability (coping with future change)", "Initial Execution Speed", "Feasibility ROI", "Use Case Generalization"], ans: 0 },
+      { q: "In Requirements Engineering, why is a Feasibility Study conducted *before* investing heavily in full-scale Requirements Elicitation and Specification?", opts: ["To avoid wasting time and money on projects that are technically, economically, or operationally unviable", "To write all the SQL queries early", "To finalize the user interface colors", "To conduct unit testing"], ans: 0 },
+      { q: "A Scrum Master notices that the Product Owner is constantly interrupting developers mid-sprint to assign new urgent tasks directly, breaking sprint focus. What should the Scrum Master do?", opts: ["Coach the Product Owner to route new requests through the Product Backlog for the next sprint", "Tell developers to work weekends", "Delete the Product Backlog", "Switch the team to Waterfall"], ans: 0 },
+      { q: "A software engineer is hired to audit a voting machine's source code and discovers a flaw that allows votes to be altered without leaving an audit log. The vendor pressures the engineer to sign a non-disclosure agreement and hide the flaw. Which ethical obligation overrides commercial pressure?", opts: ["Protecting public interest and democratic integrity", "Maximizing vendor profit", "Following management orders blindly", "Avoiding extra testing work"], ans: 0 },
+      { q: "During Problem Understanding, an analyst creates an \"As-Is\" process flowchart showing how a clinic currently schedules patients on paper, followed by a \"To-Be\" flowchart showing the automated workflow. What is the main benefit of this comparison?", opts: ["It clearly highlights process bottlenecks and the exact value the new system will add", "It replaces the need for database design", "It calculates the developer salaries", "It eliminates non-functional requirements"], ans: 0 },
+      { q: "A software project has fixed costs of $100,000. The software license is sold for $500 per client, and onboarding/support variable cost is $100 per client. How many clients are needed to break even?", opts: ["200 clients", "250 clients", "500 clients", "100 clients"], ans: 1 },
+      { q: "An SRS document states: \"The search bar shall return results in under 0.5 seconds for a catalog of up to 1 million items.\" Which Requirements Engineering activity verifies after development that this requirement is actually met?", opts: ["Performance Testing / System Verification against the SRS", "Ethnography", "Feasibility Study", "Gantt Charting"], ans: 0 },
+      { q: "A software team delivers a functional MVP (Minimum Viable Product) of a food delivery app in 4 weeks to test market demand before investing $500,000 in full-scale features. This strategy combines principles of which two concepts?", opts: ["Agile / Incremental Delivery and Economic Risk Mitigation", "Waterfall and Sunk Cost Fallacy", "V-Model and Formal Technical Reviews", "Gantt Charting and Ethnography"], ans: 0 },
+      { q: "During a Requirements Specification review, an analyst realizes two sections use different terms—\"Client\", \"Customer\", and \"Account Holder\"—to refer to the exact same entity, causing confusion among developers. How should the analyst fix this in the SRS?", opts: ["Create a standardized Glossary / Data Dictionary in the SRS", "Delete all three terms", "Let each developer choose their favorite term", "Move the terms to the Gantt chart"], ans: 0 },
+      { q: "A software engineer uses an AI code generator to produce 1,000 lines of code for a banking module and commits it directly to production without reviewing or testing it, causing a security breach. Which ethical and professional principle was violated?", opts: ["Professional responsibility and due diligence for product quality and safety", "Intellectual property rights", "Fair competition", "Schedule feasibility"], ans: 0 },
+      { q: "A project manager notices on a Gantt chart that \"Database Migration\" has 0 days of float, while \"Help Page Styling\" has 12 days of float. Which task requires stricter daily monitoring to protect the final deadline?", opts: ["Database Migration, because it lies on the Critical Path", "Help Page Styling, because it has more float", "Both require identical priority", "Neither, because Gantt charts don't track deadlines"], ans: 0 },
+      { q: "A client asks for a software system that can predict stock market prices with 100% guaranteed accuracy. During Requirements Engineering, how should the engineering lead classify and handle this request?", opts: ["Flag it as technically infeasible / unrealistic during Feasibility and Validation", "Promise to build it in 6 months using Agile", "Add it to the SRS as a functional requirement", "Create a Use Case Diagram for 100% accuracy"], ans: 0 },
+      { q: "In a hospital management Use Case Diagram, \"Register Patient\" is a base use case. If the patient has health insurance, an optional sub-flow \"Verify Insurance Policy\" is executed. Which UML notation represents this?", opts: ["A dashed arrow from \"Verify Insurance Policy\" to \"Register Patient\" with `<<extend>>`", "A dashed arrow from \"Register Patient\" to \"Verify Insurance Policy\" with `<<include>>`", "A solid line with a diamond", "A generalization arrow"], ans: 0 },
+      { q: "A software company builds a reusable authentication and role-based access control (RBAC) module during Project A, and reuses it across Projects B, C, and D, cutting development costs by 30%. Which umbrella activity enabled this financial gain?", opts: ["Reusability Management", "Formal Technical Reviews", "Ethnography", "Break-Even Analysis"], ans: 0 },
+      { q: "An Agile team conducts a 1-week \"Spike\" (time-boxed research prototype) to test whether a new graph database can handle their complex social network queries before committing to it in the main product. Why is this done?", opts: ["To reduce technical uncertainty and cope with architectural risk early", "To avoid writing user stories", "To replace Sprint Retrospectives", "To freeze requirements permanently"], ans: 0 },
+      { q: "During Requirements Elicitation, an analyst notices that operational staff are afraid to speak honestly about workflow flaws in front of their strict department manager during a group workshop. How should the analyst adapt?", opts: ["Conduct confidential one-on-one interviews or anonymous surveys with operational staff", "Cancel requirements elicitation", "Only listen to the department manager", "Assume the current workflow has no flaws"], ans: 0 },
+      { q: "A software engineering team finishes Coding and Unit Testing, then conducts System Testing where the software is tested as a whole against the SRS, followed by User Acceptance Testing (UAT) by the client. Which process model does this structured sequence exemplify?", opts: ["Waterfall / V-Model", "Throwaway Prototyping", "Ad-hoc Hacking", "Chaos Model"], ans: 0 },
+      { q: "A fintech startup's CTO insists that all sensitive customer passwords must be salted and hashed using bcrypt, and all API traffic encrypted via TLS 1.3. In the SRS, these specifications belong under which category?", opts: ["Non-Functional Requirements (Security)", "Functional Requirements", "Project Milestones", "Financial ROI Metrics"], ans: 0 },
+      { q: "A project manager is reviewing four different software proposals. Proposal 1 has an IRR of 8%, Proposal 2 has 14%, Proposal 3 has 19%, and Proposal 4 has 11%. If the company's minimum required rate of return (hurdle rate) is 15%, which proposal is financially acceptable?", opts: ["Proposal 3 (19% IRR)", "Proposal 1 (8% IRR)", "Proposal 2 (14% IRR)", "Proposal 4 (11% IRR)"], ans: 0 },
+      { q: "During the transition from Problem Understanding to Requirements Specification, a lead engineer ensures every requirement is uniquely numbered, prioritized, and agreed upon by stakeholders. What is the primary purpose of this baseline?", opts: ["To serve as an unambiguous agreement between client and developers and a basis for validation", "To eliminate the need for software testing", "To guarantee the project finishes in half the time", "To replace code version control"], ans: 0 },
+      { q: "What does NPV stand for in software project financial analysis?", opts: ["Net Product Value", "Net Present Value", "New Project Valuation", "Nominal Payment Volume"], ans: 1 },
+      { q: "Which financial metric measures the time required to recover the initial investment of a software project?", opts: ["Internal Rate of Return (IRR)", "Payback Period", "Return on Investment (ROI)", "Net Present Value (NPV)"], ans: 1 },
+      { q: "What is the formula for Return on Investment (ROI)?", opts: ["(Total Benefits - Total Costs) / Total Costs", "Total Costs / Total Benefits", "Fixed Costs / Variable Costs", "Initial Investment / Annual Cash Flow"], ans: 0 },
+      { q: "Which financial term refers to money already spent on a project that cannot be recovered?", opts: ["Opportunity Cost", "Sunk Cost", "Variable Cost", "Marginal Benefit"], ans: 1 },
+      { q: "What does a positive Net Present Value (NPV > 0) indicate about a proposed software project?", opts: ["The project will lose money", "The project is financially profitable and adds value", "The project has zero costs", "The payback period is infinite"], ans: 1 },
+      { q: "Which type of benefit is difficult to quantify directly in exact monetary terms, such as improved brand reputation?", opts: ["Tangible Benefit", "Intangible Benefit", "Direct Revenue", "Fixed Capital"], ans: 1 },
+      { q: "What is the primary goal of the Problem Understanding phase in software engineering?", opts: ["Writing optimized source code", "Identifying the root cause, stakeholders, and scope of the problem", "Deploying the database to cloud servers", "Designing unit test cases"], ans: 1 },
+      { q: "Which diagram is commonly used during Problem Understanding to show the system as a single process interacting with external entities?", opts: ["Context Diagram", "Class Diagram", "Sequence Diagram", "Deployment Diagram"], ans: 0 },
+      { q: "Who invented the Gantt chart?", opts: ["Barry Boehm", "Henry Gantt", "Kent Beck", "Watts Humphrey"], ans: 1 },
+      { q: "What does the horizontal axis of a Gantt chart typically represent?", opts: ["Project Budget", "Time / Schedule", "Lines of Code", "Defect Density"], ans: 1 },
+      { q: "How is a milestone usually represented on a Gantt chart?", opts: ["A long shaded bar", "A diamond symbol with zero duration", "A dashed circle", "A red triangle"], ans: 1 },
+      { q: "What is the Critical Path in a project schedule?", opts: ["The shortest path through the project", "The longest sequence of dependent tasks that determines minimum project duration", "Tasks with the highest financial cost", "Tasks assigned to the project manager"], ans: 1 },
+      { q: "What are the five generic process framework activities in software engineering?", opts: ["Communication, Planning, Modeling, Construction, Deployment", "Analysis, Coding, Testing, Debugging, Maintenance", "Feasibility, Design, Prototyping, Review, Release", "Elicitation, Specification, Validation, Coding, Support"], ans: 0 },
+      { q: "Which two actions make up the \"Modeling\" generic framework activity?", opts: ["Coding and Testing", "Analysis and Design", "Scheduling and Tracking", "Delivery and Feedback"], ans: 1 },
+      { q: "Which two actions make up the \"Construction\" generic framework activity?", opts: ["Estimation and Risk Analysis", "Code Generation and Testing", "Communication and Planning", "Deployment and Support"], ans: 1 },
+      { q: "Why are activities like SQA, SCM, and Risk Management called \"Umbrella Activities\"?", opts: ["They only happen at the end of a project", "They are applied throughout the entire software process across all framework activities", "They are used only when a project fails", "They replace generic framework activities"], ans: 1 },
+      { q: "What does SCM stand for in software engineering umbrella activities?", opts: ["Software Cost Management", "Software Configuration Management", "System Control Modeling", "Source Code Measurement"], ans: 1 },
+      { q: "What is the main purpose of Formal Technical Reviews (FTR)?", opts: ["To evaluate employee salaries", "To uncover errors in function, logic, or implementation early in work products", "To negotiate client contracts", "To create Gantt charts"], ans: 1 },
+      { q: "Which SDLC model follows a strict linear sequential flow where each phase must finish before the next begins?", opts: ["Agile Model", "Waterfall Model", "Incremental Model", "Prototyping Model"], ans: 1 },
+      { q: "Which SDLC model is also known as the Verification and Validation model?", opts: ["Waterfall Model", "V-Model", "Incremental Model", "Spiral Model"], ans: 1 },
+      { q: "In the V-Model, which testing phase directly corresponds to the Requirements Analysis phase?", opts: ["Unit Testing", "Integration Testing", "System Testing", "Acceptance Testing"], ans: 3 },
+      { q: "In the V-Model, which phase corresponds to Unit Testing?", opts: ["Requirements Specification", "Architectural Design", "Module / Component Design", "System Deployment"], ans: 2 },
+      { q: "Which SDLC model delivers software in small, functional releases where each release adds new capabilities?", opts: ["Waterfall Model", "Incremental Model", "Big Bang Model", "Classic Linear Model"], ans: 1 },
+      { q: "When is the Prototyping Model most useful?", opts: ["When requirements are unclear or poorly understood by the customer", "When requirements are 100% fixed and frozen", "When no user interaction is allowed", "When building safety-critical nuclear software"], ans: 0 },
+      { q: "What are the two main types of prototyping in software engineering?", opts: ["Linear and Circular", "Throwaway (Rapid) and Evolutionary", "Static and Dynamic", "Top-Down and Bottom-Up"], ans: 1 },
+      { q: "What is a major disadvantage of the Waterfall Model?", opts: ["It produces no documentation", "It is rigid and poorly accommodates changing requirements late in the project", "It cannot be used for large projects", "It requires daily customer meetings"], ans: 1 },
+      { q: "Which organization jointly published the Software Engineering Code of Ethics and Professional Practice?", opts: ["ISO and NASA", "ACM and IEEE-CS", "W3C and IETF", "ANSI and PMI"], ans: 1 },
+      { q: "According to the ACM/IEEE Code of Ethics, software engineers must act consistently with which overarching priority?", opts: ["Personal profit", "The public interest", "Competitor destruction", "Minimal documentation"], ans: 1 },
+      { q: "Which ethical principle requires engineers to accept work only in areas where they are qualified by education or experience?", opts: ["Confidentiality", "Competence", "Public Disclosure", "Self-Interest"], ans: 1 },
+      { q: "What does \"Conflict of Interest\" mean in software engineering ethics?", opts: ["Two developers disagreeing on a programming language", "Having a personal or financial stake that could compromise professional judgment", "Merging conflicting Git branches", "Conflicting requirements in an SRS"], ans: 1 },
+      { q: "How many core values are defined in the Agile Manifesto?", opts: ["2", "4", "8", "12"], ans: 1 },
+      { q: "How many guiding principles are defined in the Agile Manifesto?", opts: ["4", "10", "12", "16"], ans: 2 },
+      { q: "Which of the following is one of the four core values of the Agile Manifesto?", opts: ["Processes and tools over individuals and interactions", "Working software over comprehensive documentation", "Contract negotiation over customer collaboration", "Following a plan over responding to change"], ans: 1 },
+      { q: "In Scrum, what is a fixed time-boxed iteration (usually 1 to 4 weeks) called?", opts: ["Milestone", "Sprint", "Waterfall Phase", "Baseline"], ans: 1 },
+      { q: "Who is responsible for maximizing the value of the product and managing the Product Backlog in Scrum?", opts: ["Scrum Master", "Product Owner", "QA Tester", "Database Administrator"], ans: 1 },
+      { q: "What is the maximum recommended duration for a Daily Scrum (Standup) meeting?", opts: ["5 minutes", "15 minutes", "45 minutes", "2 hours"], ans: 1 },
+      { q: "Which Agile framework uses a visual board with columns and Work-In-Progress (WIP) limits to manage continuous flow?", opts: ["Waterfall", "Kanban", "V-Model", "RUP"], ans: 1 },
+      { q: "What does TDD stand for in Agile software development?", opts: ["Technical Design Document", "Test-Driven Development", "Total Defect Density", "Time-Dependent Deployment"], ans: 1 },
+      { q: "In UML, what does a Use Case Diagram primarily model?", opts: ["Internal database tables and foreign keys", "Functional interactions between external actors and the system", "Class inheritance and attributes", "Hardware server deployment"], ans: 1 },
+      { q: "How is an \"Actor\" represented in a standard UML Use Case Diagram?", opts: ["An oval", "A stick figure", "A diamond", "A rectangle"], ans: 1 },
+      { q: "How is a \"Use Case\" represented in a UML Use Case Diagram?", opts: ["A rectangle", "An oval (ellipse)", "A stick figure", "A cylinder"], ans: 1 },
+      { q: "What does the rectangle surrounding the use cases in a Use Case Diagram represent?", opts: ["Actor Boundary", "System Boundary (Scope)", "Database Schema", "Network Layer"], ans: 1 },
+      { q: "Which Use Case relationship indicates that a base use case ALWAYS incorporates the behavior of another use case?", opts: ["`<<extend>>`", "`<<include>>`", "Generalization", "Aggregation"], ans: 1 },
+      { q: "Which Use Case relationship indicates optional or conditional behavior added to a base use case?", opts: ["`<<include>>`", "`<<extend>>`", "Composition", "Realization"], ans: 1 },
+      { q: "What is \"Scope Creep\" in software projects?", opts: ["Reducing project features to finish early", "Uncontrolled growth or changes in project scope without adjustments to time, cost, or resources", "Testing code in small increments", "Removing obsolete code"], ans: 1 },
+      { q: "What is the main purpose of a Change Control Board (CCB)?", opts: ["To write unit tests", "To formally review, approve, or reject proposed changes to baselined work products", "To conduct daily standups", "To design UI mockups"], ans: 1 },
+      { q: "What is \"Refactoring\" in software engineering?", opts: ["Adding new user features to the UI", "Restructuring existing internal code to improve readability and maintainability without changing external behavior", "Deleting the entire database", "Writing the SRS document"], ans: 1 },
+      { q: "Which software design principle reduces the impact of changes by minimizing dependencies between modules?", opts: ["High Coupling", "Low (Loose) Coupling", "Code Duplication", "Hardcoding"], ans: 1 },
+      { q: "What is the first stage of the Requirements Engineering process?", opts: ["Requirements Validation", "Feasibility Study", "Requirements Specification", "System Deployment"], ans: 1 },
+      { q: "Which feasibility study assesses whether the organization has the necessary hardware, software, and technical expertise to build the system?", opts: ["Economic Feasibility", "Technical Feasibility", "Legal Feasibility", "Operational Feasibility"], ans: 1 },
+      { q: "Which feasibility study evaluates whether the proposed system will be accepted and effectively used by employees and end users once deployed?", opts: ["Operational Feasibility", "Technical Feasibility", "Schedule Feasibility", "Economic Feasibility"], ans: 0 },
+      { q: "Which feasibility study is also known as Cost-Benefit Analysis?", opts: ["Technical Feasibility", "Economic Feasibility", "Legal Feasibility", "Schedule Feasibility"], ans: 1 },
+      { q: "Which feasibility study checks whether the project can be completed within the required deadline?", opts: ["Operational Feasibility", "Schedule Feasibility", "Legal Feasibility", "Cultural Feasibility"], ans: 1 },
+      { q: "What is Requirements Elicitation?", opts: ["Writing automated test scripts", "Gathering and discovering requirements from stakeholders, documents, and existing systems", "Deploying code to production", "Calculating project NPV"], ans: 1 },
+      { q: "Which elicitation technique involves observing users in their actual working environment to understand daily tasks?", opts: ["Ethnography", "Brainstorming", "Reverse Engineering", "Unit Testing"], ans: 0 },
+      { q: "What does JAD stand for in Requirements Elicitation?", opts: ["Java Application Deployment", "Joint Application Development", "Junior Analyst Design", "Joint Architecture Diagram"], ans: 1 },
+      { q: "What does SRS stand for in software engineering?", opts: ["System Recovery Standard", "Software Requirements Specification", "Structured Review System", "Software Release Schedule"], ans: 1 },
+      { q: "Which IEEE standard provides recommended practices for writing a Software Requirements Specification (SRS)?", opts: ["IEEE 802.11", "IEEE 830", "IEEE 754", "IEEE 1394"], ans: 1 },
+      { q: "Which type of requirement defines *what* a system should do (services, functions, behaviors)?", opts: ["Functional Requirement", "Non-Functional Requirement", "Hardware Constraint", "Feasibility Metric"], ans: 0 },
+      { q: "Which type of requirement defines system qualities such as performance, security, reliability, and usability?", opts: ["Functional Requirement", "Non-Functional Requirement", "User Story", "Actor Role"], ans: 1 },
+      { q: "What is the primary goal of Requirements Validation?", opts: ["To write clean source code", "To ensure that the specified requirements accurately define the system the customer actually wants", "To calculate employee bonuses", "To create a Gantt chart"], ans: 1 },
+      { q: "Which Requirements Validation check ensures that no two requirements in the SRS contradict each other?", opts: ["Completeness Check", "Consistency Check", "Realism Check", "Syntax Check"], ans: 1 },
+      { q: "Which Requirements Validation check ensures that every requirement can be objectively tested or measured after implementation?", opts: ["Verifiability Check", "Realism Check", "Economic Check", "Cultural Check"], ans: 0 },
+      { q: "What is the difference between Verification and Validation?", opts: ["Verification checks \"Are we building the product right?\"; Validation checks \"Are we building the right product?\"", "Verification is done by clients; Validation is done only by compilers", "They mean the exact same thing", "Verification happens after deployment; Validation happens before coding"], ans: 0 },
+      { q: "What is a Requirements Traceability Matrix (RTM)?", opts: ["A financial spreadsheet for ROI", "A table linking requirements to their origins, design artifacts, code, and test cases", "A Gantt chart for milestones", "A list of ethical rules"], ans: 1 },
+      { q: "In MoSCoW prioritization, what does the letter \"M\" stand for?", opts: ["Maybe have", "Must have", "Minor feature", "Manageable"], ans: 1 },
+      { q: "What is \"Gold Plating\" in software development?", opts: ["Securing an API with encryption", "Adding unrequested features beyond the agreed scope, often wasting time and budget", "Optimizing database queries", "Achieving 100% test coverage"], ans: 1 },
+      { q: "Which financial metric is the discount rate at which the Net Present Value (NPV) of a project equals zero?", opts: ["Payback Period", "Internal Rate of Return (IRR)", "Break-Even Point", "Sunk Cost"], ans: 1 },
+      { q: "In a Gantt chart, what does \"Slack\" (or Float) mean?", opts: ["The total budget remaining", "The amount of time a task can be delayed without delaying the project completion date", "The number of unassigned developers", "A task that has been cancelled"], ans: 1 },
+      { q: "Which generic framework activity involves delivering the software to the customer and gathering post-release feedback?", opts: ["Planning", "Modeling", "Construction", "Deployment"], ans: 3 },
+      { q: "Which umbrella activity ensures that software work products conform to defined quality standards and processes?", opts: ["Software Quality Assurance (SQA)", "Reusability Management", "Problem Understanding", "Financial Analysis"], ans: 0 },
+      { q: "In the V-Model, what is located at the bottom tip (vertex) of the \"V\"?", opts: ["Requirements Analysis", "Coding / Implementation", "Acceptance Testing", "Feasibility Study"], ans: 1 },
+      { q: "Which Agile ceremony is held at the end of a sprint for the team to reflect on their process and plan improvements?", opts: ["Sprint Review", "Sprint Retrospective", "Daily Standup", "Backlog Grooming"], ans: 1 },
+      { q: "In Agile, what is the \"Product Backlog\"?", opts: ["A list of completed tasks", "A prioritized list of all features, enhancements, and fixes needed for the product", "A bug report from production", "A financial balance sheet"], ans: 1 },
+      { q: "What is \"Pair Programming\"?", opts: ["Two programmers working on two separate projects", "Two programmers working together at one workstation, one coding and one reviewing", "Writing code in two different languages", "Outsourcing half the code"], ans: 1 },
+      { q: "In a Use Case Diagram, how is an Actor placed relative to the System Boundary rectangle?", opts: ["Inside the rectangle", "Outside the rectangle", "Overlapping the dashed line", "Inside the use case oval"], ans: 1 },
+      { q: "What type of arrow represents Generalization (inheritance) between two actors in a Use Case Diagram?", opts: ["A dashed line with an open arrow", "A solid line with a closed hollow triangle arrowhead", "A dotted line with a diamond", "A wavy line"], ans: 1 },
+      { q: "Which quality attribute of a good SRS means that every requirement has only one possible interpretation?", opts: ["Unambiguity", "Completeness", "Traceability", "Modifiability"], ans: 0 },
+      { q: "What is the \"Break-Even Point\" in financial analysis?", opts: ["When project costs exceed revenue by 50%", "The point where total revenues equal total costs (zero net profit or loss)", "When the project is cancelled", "The final day of the Gantt chart"], ans: 1 },
+      { q: "Which task dependency on a Gantt chart means Task B cannot start until Task A has finished?", opts: ["Start-to-Start (SS)", "Finish-to-Start (FS)", "Finish-to-Finish (FF)", "Start-to-Finish (SF)"], ans: 1 },
+      { q: "Which SDLC model is best suited when requirements are well-defined, stable, and unlikely to change?", opts: ["Waterfall Model", "Prototyping Model", "Extreme Programming", "Spiral Model"], ans: 0 },
+      { q: "In Scrum, who is responsible for removing impediments (blockers) and ensuring the team follows Agile practices?", opts: ["Product Owner", "Scrum Master", "External Stakeholder", "System Architect"], ans: 1 },
+      { q: "What does \"Continuous Integration (CI)\" mean in modern Agile development?", opts: ["Deploying code once a year", "Merging developer code changes into a central repository frequently, with automated builds and tests", "Writing documentation continuously", "Holding continuous client meetings"], ans: 1 },
+      { q: "Which type of requirement is \"The system shall allow a customer to view their order history\"?", opts: ["Functional Requirement", "Non-Functional Requirement", "Legal Constraint", "Schedule Milestone"], ans: 0 },
+      { q: "Which type of requirement is \"The application must run smoothly on both Android 12+ and iOS 15+ devices\"?", opts: ["Functional Requirement", "Non-Functional Requirement (Portability / Compatibility)", "Financial Requirement", "Actor Relationship"], ans: 1 },
+      { q: "During Requirements Elicitation, what is a \"Stakeholder\"?", opts: ["Only the person paying for the software", "Anyone affected by, involved in, or having an influence on the software system", "Only the backend developers", "Only the end users"], ans: 1 },
+      { q: "What is \"Technical Debt\" in software engineering?", opts: ["Unpaid cloud server bills", "The implied cost of future rework caused by choosing an easy, quick solution now instead of a better approach", "The salary owed to developers", "Hardware depreciation cost"], ans: 1 },
+      { q: "Which umbrella activity deals with identifying, assessing, and mitigating potential threats to a software project's success?", opts: ["Risk Management", "Reusability Management", "Work Product Preparation", "Measurement"], ans: 0 },
+      { q: "In Problem Understanding, what is the \"Scope\" of a software system?", opts: ["The programming language used", "The clear boundary defining what features and processes are included in and excluded from the system", "The number of lines of code", "The testing framework"], ans: 1 },
+      { q: "Which metric divides Net Profit by Initial Investment to express profitability as a percentage?", opts: ["Payback Period", "Return on Investment (ROI)", "Sunk Cost", "Critical Path"], ans: 1 },
+      { q: "In a V-Model, what is tested during \"Integration Testing\"?", opts: ["Individual isolated functions", "Interfaces and interactions between combined modules or components", "The entire system from an end-user business perspective", "Hardware power consumption"], ans: 1 },
+      { q: "What is an \"MVP\" in Agile and Incremental development?", opts: ["Most Valuable Programmer", "Minimum Viable Product", "Maximum Velocity Plan", "Modular Verification Process"], ans: 1 },
+      { q: "Which ethical duty requires software engineers to protect sensitive user and client data from unauthorized access?", opts: ["Confidentiality", "Public Disclosure", "Open-Source Licensing", "Rapid Prototyping"], ans: 0 },
+      { q: "In a Use Case Diagram, can one actor interact with multiple use cases?", opts: ["No, each actor is limited to one use case", "Yes, an actor can be associated with multiple use cases", "Only if using the Waterfall model", "Only if the use cases are connected by `<<extend>>`"], ans: 1 },
+      { q: "What is the main purpose of Requirements Prioritization?", opts: ["To delete half of the client's requirements", "To rank requirements by business value, urgency, and risk so the most critical features are built first", "To avoid writing an SRS", "To calculate developer overtime"], ans: 1 },
+      { q: "Which Requirements Engineering activity involves transforming gathered raw user needs into a structured, formal document?", opts: ["Feasibility Study", "Requirements Specification", "System Deployment", "Acceptance Testing"], ans: 1 },
+      { q: "What happens if a task on the Critical Path of a Gantt chart is delayed by 2 days?", opts: ["The entire project's completion date is delayed by 2 days", "Nothing happens to the final deadline", "Other tasks speed up automatically", "The project's NPV increases"], ans: 0 },
+      { q: "Which model combines elements of linear design with iterative prototyping, allowing users to test early mockups before full construction?", opts: ["Prototyping Model", "Pure Waterfall Model", "Big Bang Model", "Classic V-Model"], ans: 0 },
+      { q: "In Agile, what is a \"User Story\" typically structured around?", opts: ["As a [role], I want [feature], so that [benefit]", "Given [database], When [SQL runs], Then [error]", "Class [Name] extends [Parent]", "Input -> Process -> Output"], ans: 0 },
+      { q: "Why is Requirements Validation essential before starting software design and coding?", opts: ["Fixing requirement defects early is vastly cheaper and easier than fixing them after coding or deployment", "It eliminates the need for a development team", "It automatically generates the user manual", "It guarantees zero hardware failures"], ans: 0 }
+    ];
+
+    // --------------------------------------------------------------
+    // QUIZ ENGINE
+    // --------------------------------------------------------------
+    let currentQuestions = [];
+    let answeredState = {};
+
+    const mcqList = document.getElementById('mcqList');
+    const answeredCountSpan = document.getElementById('answeredCount');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const themeBtn = document.getElementById('themeBtn');
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function buildQuestionSet(shuffleQuestions = false, shuffleOptions = false) {
+      let items = rawMCQs.map((item, idx) => ({
+        originalIndex: idx,
+        q: item.q,
+        opts: [...item.opts],
+        correctIdx: item.ans
+      }));
+
+      if (shuffleQuestions) {
+        items = shuffleArray(items);
+      }
+
+      if (shuffleOptions) {
+        items = items.map(item => {
+          const correctOptionText = item.opts[item.correctIdx];
+          const shuffledOpts = shuffleArray([...item.opts]);
+          const newCorrectIdx = shuffledOpts.indexOf(correctOptionText);
+          return {
+            ...item,
+            opts: shuffledOpts,
+            correctIdx: newCorrectIdx
+          };
+        });
+      }
+
+      return items;
+    }
+
+    function renderQuiz(questions, resetAnswers = true) {
+      if (resetAnswers) {
+        answeredState = {};
+      }
+      currentQuestions = questions;
+      mcqList.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const qNum = idx + 1;
+        const card = document.createElement('div');
+        card.className = 'mcq-card';
+        card.dataset.qIndex = idx;
+
+        const qDiv = document.createElement('div');
+        qDiv.className = 'mcq-question';
+        qDiv.innerHTML = `<span class="q-num">Q${qNum}</span> <span>${escapeHtml(q.q)}</span>`;
+
+        const optsDiv = document.createElement('div');
+        optsDiv.className = 'options';
+
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = 'feedback';
+        feedbackDiv.id = `feedback-${idx}`;
+
+        q.opts.forEach((optText, optIdx) => {
+          const label = document.createElement('label');
+          label.className = 'option';
+          label.dataset.optIdx = optIdx;
+
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = `q${idx}`;
+          radio.value = optIdx;
+
+          const span = document.createElement('span');
+          span.textContent = optText;
+
+          label.appendChild(radio);
+          label.appendChild(span);
+
+          const saved = answeredState[idx];
+          if (saved !== undefined) {
+            if (saved === optIdx) {
+              radio.checked = true;
+              label.classList.add('selected');
+              if (optIdx === q.correctIdx) {
+                label.classList.add('correct-option');
+                card.classList.add('correct-highlight');
+                feedbackDiv.textContent = '✓ Correct!';
+                feedbackDiv.classList.add('correct');
+              } else {
+                label.classList.add('wrong-option');
+                card.classList.add('wrong-highlight');
+                feedbackDiv.textContent = `✗ Incorrect. The correct answer is: ${escapeHtml(q.opts[q.correctIdx])}`;
+                feedbackDiv.classList.add('wrong');
+                const correctLabel = optsDiv.querySelector(`.option[data-opt-idx="${q.correctIdx}"]`);
+                if (correctLabel) correctLabel.classList.add('correct-option');
+              }
+            }
+          }
+
+          radio.addEventListener('change', (e) => {
+            handleOptionSelect(idx, optIdx, q, card, optsDiv, feedbackDiv);
+          });
+
+          optsDiv.appendChild(label);
+        });
+
+        card.appendChild(qDiv);
+        card.appendChild(optsDiv);
+        card.appendChild(feedbackDiv);
+        mcqList.appendChild(card);
+      });
+
+      updateAnsweredCount();
+    }
+
+    function handleOptionSelect(qIdx, optIdx, question, card, optsDiv, feedbackDiv) {
+      const allOptions = optsDiv.querySelectorAll('.option');
+      allOptions.forEach(opt => {
+        opt.classList.remove('selected', 'correct-option', 'wrong-option');
+      });
+      card.classList.remove('correct-highlight', 'wrong-highlight');
+      feedbackDiv.textContent = '';
+      feedbackDiv.className = 'feedback';
+
+      const selectedLabel = optsDiv.querySelector(`.option[data-opt-idx="${optIdx}"]`);
+      if (selectedLabel) selectedLabel.classList.add('selected');
+
+      const isCorrect = (optIdx === question.correctIdx);
+
+      if (isCorrect) {
+        if (selectedLabel) selectedLabel.classList.add('correct-option');
+        card.classList.add('correct-highlight');
+        feedbackDiv.textContent = '✓ Correct!';
+        feedbackDiv.classList.add('correct');
+      } else {
+        if (selectedLabel) selectedLabel.classList.add('wrong-option');
+        card.classList.add('wrong-highlight');
+        const correctLabel = optsDiv.querySelector(`.option[data-opt-idx="${question.correctIdx}"]`);
+        if (correctLabel) correctLabel.classList.add('correct-option');
+        feedbackDiv.textContent = `✗ Incorrect. The correct answer is: ${escapeHtml(question.opts[question.correctIdx])}`;
+        feedbackDiv.classList.add('wrong');
+      }
+
+      answeredState[qIdx] = optIdx;
+      updateAnsweredCount();
+    }
+
+    function updateAnsweredCount() {
+      const total = currentQuestions.length;
+      const answered = Object.keys(answeredState).length;
+      answeredCountSpan.textContent = `${answered} / ${total} answered`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function init() {
+      const questions = buildQuestionSet(false, false);
+      renderQuiz(questions, true);
+    }
+
+    shuffleBtn.addEventListener('click', () => {
+      const shuffled = buildQuestionSet(true, true);
+      renderQuiz(shuffled, true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Dark mode toggle
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      if (document.body.classList.contains('dark')) {
+        themeBtn.textContent = '☀️ Light mode';
+      } else {
+        themeBtn.textContent = '🌙 Dark mode';
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
